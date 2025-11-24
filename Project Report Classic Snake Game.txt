@@ -1,0 +1,129 @@
+Project Report: Classic Snake Game
+
+1. Project Overview
+
+Project Name: Classic Snake Game
+Core Technology: Python with turtle graphics library
+Goal: To implement a fully functional, classic arcade-style Snake game featuring real-time input, collision detection, score tracking, and an optimized, non-blocking game loop.
+
+2. Technology Stack
+
+Component
+
+Technology
+
+Rationale
+
+Language
+
+Python 3.x
+
+Chosen for its readability, rapid development capabilities, and extensive standard library.
+
+Graphics/GUI
+
+turtle Library
+
+A simple, built-in library ideal for educational projects and rapid prototyping of 2D games, providing drawing primitives and event handling.
+
+Game Loop
+
+window.ontimer()
+
+Used instead of a while True loop with time.sleep(). This is crucial for cooperative multitasking, allowing the game loop to run without blocking the turtle window's event listeners, resulting in a smoother, more responsive application.
+
+3. Game Architecture and Design
+
+The game follows a simple, centralized architecture managed primarily by global variables and the single game_loop function.
+
+3.1 Core Components
+
+Component
+
+Representation
+
+Role
+
+Screen
+
+turtle.Screen()
+
+Sets up the display, manages size, background, and the tracer(0)/update() control for smooth rendering.
+
+Snake Head
+
+turtle.Turtle() (head)
+
+The player-controlled element. Tracks position (xcor, ycor) and current direction (head.direction).
+
+Snake Body
+
+List of turtle.Turtle() objects (segments)
+
+Stores the body parts. New segments are appended on food collision.
+
+Food
+
+turtle.Turtle() (food)
+
+A simple target object. Its position is randomized upon consumption.
+
+Scoreboard
+
+turtle.Turtle() (pen)
+
+Dedicated turtle used exclusively for drawing and updating text information (Score, High Score).
+
+3.2 Key Functions and Logic
+
+3.2.1 Movement and Input (go_up, move_head)
+
+Input functions (go_up, go_down, etc.) utilize keyboard event bindings (window.onkeypress) to update the head.direction variable. They include a simple check to prevent instantaneous reverse movement (e.g., cannot go up if current direction is down).
+
+The move_head function translates the current head.direction into actual pixel movement by modifying the head's coordinates (setx, sety) by the fixed SEGMENT_SIZE.
+
+3.2.2 Segment Update Logic
+
+This is the most critical part of the game loop, responsible for the illusion of snake movement:
+
+The loop iterates through the segments list in reverse (range(len(segments) - 1, 0, -1)).
+
+Each segment is moved to the position (xcor, ycor) of the segment before it.
+
+The very first segment (segments[0]) is then moved to the exact position of the head before the head moves in the next cycle.
+
+This ensures the body follows the head exactly one step behind, preserving the snake's shape and integrity.
+
+3.2.3 Collision Detection
+
+Collision detection is handled using the distance() method of the turtle object.
+
+Food Collision: If head.distance(food) < SEGMENT_SIZE, the food is considered "eaten." This triggers:
+
+Adding a new segment.
+
+Increasing the score and updating the high score if necessary.
+
+Reducing the DELAY_MS (increasing speed).
+
+Randomly repositioning the food.
+
+Border Collision: Checks if the head's coordinates exceed the screen boundaries (e.g., abs(head.xcor()) > 290).
+
+Self-Collision: Checks if the head's distance to any segment is less than half a segment size.
+
+3.2.4 Game Loop Control (game_loop)
+
+The game_loop function schedules its next execution using window.ontimer(game_loop, DELAY_MS). The DELAY_MS variable acts as the primary game speed control, reducing with every point scored to progressively increase difficulty.
+
+4. Conclusion and Future Improvements
+
+The Classic Snake Game project successfully demonstrates the use of Python's turtle library for game development. The implementation of window.ontimer ensures a smooth user experience superior to blocking I/O techniques.
+
+Potential future improvements could include:
+
+Level Design: Introduce different backgrounds or obstacles.
+
+Sound Effects: Add audio feedback for eating food or game over events.
+
+Persistence: Implement a method to save the high score permanently to a file or a database.
